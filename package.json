@@ -4,7 +4,8 @@
   "description": "A tool to procedurally generate areas compatible with the Ranvier MUD engine.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./**/*.spec.js"
+    "test": "mocha ./**/*.spec.js",
+    "lint": "standard ./**/*.js --fix"
   },
   "keywords": [
     "ranvier",
@@ -22,6 +23,10 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
-    "mocha": "^5.0.1"
+    "mocha": "^5.0.1",
+    "standard": "^11.0.0"
+  },
+  "standard": {
+    "globals": [ "describe", "it" ]
   }
 }
