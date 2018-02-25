@@ -19,7 +19,7 @@ module.exports = function generator (options = {}) {
     timeLimit = 60 * 1000,
     mapperOptions = {}
   } = options
-  console.log(options)
+
   // Make just a 2D map as MVP.
   if (depth <= 0) {
     const Mapper = ROT.Map[capitalize(type)]
@@ -37,7 +37,6 @@ module.exports = function generator (options = {}) {
       map.create(mapper)
     } catch (error) {
       console.log(`Error when creating map. Please ensure options are correct for ROT-js map type ${type}.`)
-      console.log({ _mapperOptions })
       throw error
     }
 
