@@ -27,17 +27,17 @@ module.exports = function generator (options = {}) {
       throw new Error(`The map type ${type} is unsupported`)
     }
 
-    const mapperOptions = Object.assign({}, mapperOptions, {
+    const _mapperOptions = Object.assign({}, mapperOptions, {
       roomDugPercentage, timeLimit
     })
 
-    const mapper = new Mapper(width, height, mapperOptions)
+    const mapper = new Mapper(width, height, _mapperOptions)
     const map = new Map2D({width, height})
     try {
       map.create(mapper)
     } catch (error) {
       console.log(`Error when creating map. Please ensure options are correct for ROT-js map type ${type}.`)
-      console.log({ mapOptions })
+      console.log({ _mapperOptions })
       throw error
     }
 

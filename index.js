@@ -49,7 +49,7 @@ module.exports = {
         const yaml = parse(options, rooms)
         console.log({yaml, writeToFile})
         if (writeToFile) {
-          console.log("Writing to file...")
+          console.log('Writing to file...')
           write(yaml, options)
         }
         return { graphic, rooms, yaml }

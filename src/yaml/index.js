@@ -25,7 +25,7 @@ function parse (options, rooms) {
     info: areaInfo
   })
 
-    return { roomsYaml, areaYaml }
+  return { roomsYaml, areaYaml }
 }
 
 // TODO: Test
@@ -34,8 +34,8 @@ function write (yaml, options) {
   const {
     filepath = process.cwd()
   } = options
-  console.log('Writing to ' + filepath);
-  fs.writeFileSync(filepath + 'manifest.yml', areaYaml)
-  fs.writeFileSync(filepath + 'rooms.yaml', roomsYaml)
+  console.log('Writing to ' + filepath)
+  fs.writeFileSync(filepath + '/manifest.yml', areaYaml)
+  fs.writeFileSync(filepath + '/rooms.yml', roomsYaml)
   console.log('Done!')
 }
