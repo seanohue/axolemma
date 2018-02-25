@@ -21,7 +21,7 @@ module.exports = function generator (options = {}) {
   } = options
 
   // Make just a 2D map as MVP.
-  if (depth <= 0) {
+  if (depth <= 1) {
     const Mapper = ROT.Map[capitalize(type)]
     if (!Mapper) {
       throw new Error(`The map type ${type} is unsupported`)

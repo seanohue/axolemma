@@ -1,6 +1,7 @@
 const generator = require('./src/generator')
 const {parse, write} = require('./src/yaml')
 const {resolveTrue} = require('./src/util')
+const {getOptions} = require('./src/config')
 
 /**
  * This serves as the entry point to the library via require or import or whatnot.
@@ -35,19 +36,24 @@ module.exports = {
    * @async
    */
   async generate (options = {}, promptAsync = resolveTrue) {
+    const configuredOptions = Object.assign({},
+      getOptions(),
+      options
+    )
+
     const {
       writeToFile = false
-    } = options
+    } = configuredOptions
 
     let goAhead = false
     while (!goAhead) {
-      const {graphic, rooms} = generator(options)
+      const {graphic, rooms} = generator(configuredOptions)
       console.log(`Generated an area with ${rooms.length} rooms.\n${graphic}`)
       goAhead = await promptAsync(graphic, rooms.length)
       if (goAhead) {
-        const yaml = parse(options, rooms)
+        const yaml = parse(configuredOptions, rooms)
         if (writeToFile) {
-          write(yaml, options)
+          write(yaml, configuredOptions)
         }
         return { graphic, rooms, yaml }
       }

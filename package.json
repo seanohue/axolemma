@@ -20,6 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "dashify": "^1.0.0",
+    "find-config": "^1.0.0",
     "js-yaml": "^3.10.0",
     "rot-js": "^0.6.5"
   },
