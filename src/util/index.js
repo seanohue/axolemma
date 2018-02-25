@@ -1,5 +1,7 @@
 module.exports = {
-  capitalize
+  capitalize,
+  resolveTrue,
+  noop
 }
 
 function capitalize (string) {
@@ -8,3 +10,9 @@ function capitalize (string) {
   const [first, ...rest] = string
   return first.toUpperCase().concat(rest.join(''))
 }
+
+function resolveTrue () {
+  return Promise.resolve(true)
+}
+
+function noop () {}

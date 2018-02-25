@@ -19,6 +19,8 @@
   "author": "Sean O'Donohue",
   "license": "MIT",
   "dependencies": {
+    "dashify": "^1.0.0",
+    "js-yaml": "^3.10.0",
     "rot-js": "^0.6.5"
   },
   "devDependencies": {
@@ -27,6 +29,9 @@
     "standard": "^11.0.0"
   },
   "standard": {
-    "globals": [ "describe", "it" ]
+    "globals": [
+      "describe",
+      "it"
+    ]
   }
 }

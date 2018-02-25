@@ -1,6 +1,6 @@
 const ROT = require('rot-js')
 
-const {Tile, Map2D} = require('../map')
+const {Map2D} = require('../map')
 const {capitalize} = require('../util')
 // TODOS:
 // - Pull in options from .axollemaconfig file in cwd if avail
@@ -9,21 +9,39 @@ const {capitalize} = require('../util')
 
 module.exports = function generator (options = {}) {
   const {
-    width = 10,
-    height = 10,
+    width = 20,
+    height = 20,
     depth = 0,
-    type = 'Digger'
+    type = 'Uniform',
+    roomDugPercentage = 0.25,
+    timeLimit = 60 * 1000
   } = options
 
   // Make just a 2D map as MVP.
   if (depth <= 0) {
-    const mapperConstructor = ROT.Map[capitalize(type)]
-    if (!mapperConstructor) {
+    const Mapper = ROT.Map[capitalize(type)]
+    if (!Mapper) {
       throw new Error(`The map type ${type} is unsupported`)
     }
 
-    const mapper = new mapperConstructor(width, height)
-    console.log(mapper)
+    const dungeonOptions = {
+      roomDugPercentage, timeLimit
+    }
+
+    const mapper = new Mapper(width, height, dungeonOptions)
+    const map = new Map2D({width, height})
+    try {
+      map.create(mapper)
+    } catch (e) {
+      console.log(mapper)
+      console.log(map)
+      throw e
+    }
+
+    return {
+      graphic: map.draw(),
+      rooms: map.getAllRooms()
+    }
   } else {
     throw new Error('3D areas are as of yet unsupported. Omit the Z value for your map.')
   }
