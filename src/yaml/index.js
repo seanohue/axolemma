@@ -3,7 +3,7 @@ const fs = require('fs')
 
 module.exports = { parse, write }
 
-function parse(options, rooms) {
+function parse (options, rooms) {
   if (!rooms || !rooms.length) {
     throw new Error('Attempted to parse an empty area.')
   }
@@ -27,7 +27,7 @@ function parse(options, rooms) {
 }
 
 // TODO: Test
-function write(yaml, options) {
+function write (yaml, options) {
   const { roomsYaml, areaYaml } = yaml
   const {
     filepath = process.cwd()

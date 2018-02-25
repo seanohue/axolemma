@@ -7,7 +7,7 @@ const {resolveTrue} = require('./src/util')
  * It is also required and used by the CLI app.
  */
 
- /**
+/**
   * @typedef {Object} AxolemmaOptions
   * @property {number} [width] The maximum width of the area you'd like to generate (x coordinates). Defaults to 20.
   * @property {number} [height] The maximum height of the area you'd like to generate (y coordinates). Defaults to 20.
@@ -27,7 +27,6 @@ const {resolveTrue} = require('./src/util')
  * @async
  */
 
-
 module.exports = {
   /**
    *
@@ -37,7 +36,7 @@ module.exports = {
    */
   async generate (options = {}, promptAsync = resolveTrue) {
     const {
-      writeToFile = false,
+      writeToFile = false
     } = options
 
     let goAhead = false
@@ -55,6 +54,3 @@ module.exports = {
     }
   }
 }
-
-
-
