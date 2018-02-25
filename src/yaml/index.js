@@ -17,13 +17,15 @@ function parse (options, rooms) {
     throw new Error('Invalid area info field.')
   }
 
+  const yamlOptions = { flowLevel: 2 }
   const roomsYaml = yaml.safeDump(
-    rooms.map(room => room.serialize())
+    rooms.map(room => room.serialize()),
+    yamlOptions
   )
   const areaYaml = yaml.safeDump({
     title: areaTitle,
     info: areaInfo
-  })
+  }, yamlOptions)
 
   return { roomsYaml, areaYaml }
 }
