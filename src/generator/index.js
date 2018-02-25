@@ -2,10 +2,12 @@ const ROT = require('rot-js')
 
 const {Map2D} = require('../map')
 const {capitalize} = require('../util')
+
 // TODOS:
-// - Pull in options from .axollemaconfig file in cwd if avail
+// - Pull in options from nearest pkg.json or .axollemaconfig file in cwd if avail
 //   otherwise go with fallback defaults.
 // - Actually make this a CLI app.
+// - Use ROT.RNG to spice things up as far as adding points of interest (perhaps the weighted thing).
 
 module.exports = function generator (options = {}) {
   const {
