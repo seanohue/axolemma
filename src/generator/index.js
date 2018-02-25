@@ -16,9 +16,10 @@ module.exports = function generator (options = {}) {
     depth = 0,
     type = 'Uniform',
     roomDugPercentage = 0.25,
-    timeLimit = 60 * 1000
+    timeLimit = 60 * 1000,
+    mapperOptions = {}
   } = options
-
+  console.log(options)
   // Make just a 2D map as MVP.
   if (depth <= 0) {
     const Mapper = ROT.Map[capitalize(type)]
@@ -26,18 +27,18 @@ module.exports = function generator (options = {}) {
       throw new Error(`The map type ${type} is unsupported`)
     }
 
-    const dungeonOptions = {
+    const mapperOptions = Object.assign({}, mapperOptions, {
       roomDugPercentage, timeLimit
-    }
+    })
 
-    const mapper = new Mapper(width, height, dungeonOptions)
+    const mapper = new Mapper(width, height, mapperOptions)
     const map = new Map2D({width, height})
     try {
       map.create(mapper)
-    } catch (e) {
-      console.log(mapper)
-      console.log(map)
-      throw e
+    } catch (error) {
+      console.log(`Error when creating map. Please ensure options are correct for ROT-js map type ${type}.`)
+      console.log({ mapOptions })
+      throw error
     }
 
     return {

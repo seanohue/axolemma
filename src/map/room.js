@@ -20,4 +20,15 @@ module.exports = class Room {
   setId (id = 0) {
     this.id = `${dashify(this.title)}-${id}`
   }
+
+  serialize() {
+    const {title, description, id} = this
+    const coordinates = [this.x, this.y, this.z]
+    return {
+      id,
+      title,
+      description,
+      coordinates
+    }
+  }
 }

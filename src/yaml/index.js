@@ -17,13 +17,15 @@ function parse (options, rooms) {
     throw new Error('Invalid area info field.')
   }
 
-  const roomsYaml = yaml.safeDump(rooms)
+  const roomsYaml = yaml.safeDump(
+    rooms.map(room => room.serialize())
+  )
   const areaYaml = yaml.safeDump({
     title: areaTitle,
     info: areaInfo
   })
 
-  return { roomsYaml, areaYaml }
+    return { roomsYaml, areaYaml }
 }
 
 // TODO: Test
@@ -32,7 +34,8 @@ function write (yaml, options) {
   const {
     filepath = process.cwd()
   } = options
-
+  console.log('Writing to ' + filepath);
   fs.writeFileSync(filepath + 'manifest.yml', areaYaml)
   fs.writeFileSync(filepath + 'rooms.yaml', roomsYaml)
+  console.log('Done!')
 }

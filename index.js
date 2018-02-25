@@ -44,13 +44,19 @@ module.exports = {
       const {graphic, rooms} = generator(options)
       console.log(`Generated an area with ${rooms.length} rooms.\n${graphic}`)
       goAhead = await promptAsync(graphic, rooms.length)
+      console.log({goAhead})
       if (goAhead) {
         const yaml = parse(options, rooms)
+        console.log({yaml, writeToFile})
         if (writeToFile) {
+          console.log("Writing to file...")
           write(yaml, options)
         }
         return { graphic, rooms, yaml }
       }
     }
-  }
+  },
+
+  parse,
+  write
 }
