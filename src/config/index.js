@@ -10,7 +10,7 @@ module.exports = {
    * .axolemmaconfig.json (will be skipped in favor of .axolemmaconfig.js)
    * package.json
    */
-  getOptions() {
+  getOptions () {
     const configFinderOptions = {
       home: true,
       module: true
