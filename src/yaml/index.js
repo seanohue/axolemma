@@ -1,4 +1,5 @@
 const yaml = require('js-yaml')
+const fs = require('fs')
 
 module.exports = { parse, write }
 
@@ -8,7 +9,7 @@ function parse(options, rooms) {
   }
 
   const {
-    areaName = 'Generated Area',
+    areaTitle = 'Generated Area',
     areaInfo = { respawnInterval: 60 }
   } = options
 
@@ -18,11 +19,20 @@ function parse(options, rooms) {
 
   const roomsYaml = yaml.safeDump(rooms)
   const areaYaml = yaml.safeDump({
-    title: areaName,
+    title: areaTitle,
     info: areaInfo
   })
 
   return { roomsYaml, areaYaml }
 }
 
-function write() {}
+// TODO: Test
+function write(yaml, options) {
+  const { roomsYaml, areaYaml } = yaml
+  const {
+    filepath = process.cwd()
+  } = options
+
+  fs.writeFileSync(filepath + 'manifest.yml', areaYaml)
+  fs.writeFileSync(filepath + 'rooms.yaml', roomsYaml)
+}
