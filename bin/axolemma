@@ -1,0 +1,33 @@
+#!/usr/bin/env node
+
+const ax = require('axolemma')
+const cli = require('commander')
+const inquirer = require('inquirer')
+const semver = require('semver')
+const {Subject} = require('rxjs')
+const {bold, green, blue, red} = require('chalk')
+
+const {version} = require('../package.json')
+
+if (semver.lt('8.0.0')) {
+  console.log(red(`Axolemma supports Node version ${bold('8')} or higher.`))
+  return process.exit(1)
+}
+
+cli.version('0.1.0')
+cli.on('--help', () => {
+  console.log(blue(`Type ${bold(green('axolemma'))} to start creating.`))
+})
+
+const prompts = new Subject()
+inquirer.prompt(prompts)
+
+prompts.next({
+  type: 'input',
+  name: 'areaTitle',
+  message: blue('What would you like to title this area?'),
+  validate(input) {
+    const alphanumeric = /^[0-9a-zA-Z]+$/
+    return input.match(alphanumeric)
+  }
+})
