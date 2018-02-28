@@ -1,10 +1,12 @@
 #!/usr/bin/env node
-
+const log = require('loglevel')
 const cli = require('commander')
 const inquirer = require('inquirer')
 const semver = require('semver')
-const {Subject} = require('rxjs')
+const {Subject, Observable} = require('rxjs')
 const {bold, green, blue, red} = require('chalk')
+
+log.setLevel('info')
 
 if (semver.lt(process.version,'8.0.0')) {
   console.log(red(`Axolemma supports Node ${bold('v8.0.0')} or higher.`))
@@ -17,40 +19,41 @@ const {version} = require('../package.json')
 const ax = require('../')
 const {isAlphanumeric} = require('./validation')
 
-
-
 cli.version('0.1.0')
 cli.on('--help', () => {
   console.log(blue(`Type ${bold(green('axolemma'))} to start creating.`))
 })
 
 const prompts = new Subject()
+
+// https://github.com/SBoudrias/Inquirer.js/blob/master/examples/rx-observable-array.js
+
 inquirer.prompt(prompts).ui.process.subscribe(
   onEach,
   onError, function(answers){
-  console.log(answers)
+  log.debug({answers})
   ax.generate(answers) // Eventually this will be done during the prompts, and user will be prompted to approve of the generated map.
 })
 
-function onEach() { console.log('onEach', arguments) }
+function onEach() { log.debug('onEach', arguments) }
 function onError() {
-  console.error(arguments)
+  log.error('An error has occurred:', arguments)
   throw arguments[0] || 'Mystery error!'
 }
 
-prompts.next({
+prompts.next(Observable.pairs({
   type: 'input',
   name: 'areaTitle',
   message: blue('What would you like to title this area?'),
   validate: isAlphanumeric,
-})
+}))
 
-prompts.next({
+prompts.next(Observable.pairs({
   type: 'confirm',
   name: 'customizeAreaInfo',
   message: blue('Would you like to further customize the area\'s manifest information?')
-})
-
-
+}))
 
 prompts.complete()
+
+log.debug(prompts)
