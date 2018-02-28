@@ -25,10 +25,18 @@ cli.on('--help', () => {
 })
 
 const prompts = new Subject()
-inquirer.prompt(prompts).ui.process.subscribe(console.log, console.log, function(answers){
+inquirer.prompt(prompts).ui.process.subscribe(
+  onEach,
+  onError, function(answers){
   console.log(answers)
   ax.generate(answers) // Eventually this will be done during the prompts, and user will be prompted to approve of the generated map.
 })
+
+function onEach() { console.log('onEach', arguments) }
+function onError() {
+  console.error(arguments)
+  throw arguments[0] || 'Mystery error!'
+}
 
 prompts.next({
   type: 'input',
@@ -36,5 +44,13 @@ prompts.next({
   message: blue('What would you like to title this area?'),
   validate: isAlphanumeric,
 })
+
+prompts.next({
+  type: 'confirm',
+  name: 'customizeAreaInfo',
+  message: blue('Would you like to further customize the area\'s manifest information?')
+})
+
+
 
 prompts.complete()
