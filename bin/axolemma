@@ -3,16 +3,15 @@ const log = require('loglevel')
 const cli = require('commander')
 const inquirer = require('inquirer')
 const semver = require('semver')
-const {Subject, Observable} = require('rxjs')
+const requiresNode = require('requires-node-version')
+const {Subject, Observable} = require('rxjs/Rx')
 const {bold, green, blue, red} = require('chalk')
 
+requiresNode('8.0.0')
+
+// Obtain maximum information, for now.
 log.setLevel('info')
 
-if (semver.lt(process.version,'8.0.0')) {
-  console.log(red(`Axolemma supports Node ${bold('v8.0.0')} or higher.`))
-  console.log(red(`You are currently using ${bold(process.version)}.`))
-  return process.exit(1)
-}
 
 const {version} = require('../package.json')
 
@@ -24,36 +23,44 @@ cli.on('--help', () => {
   console.log(blue(`Type ${bold(green('axolemma'))} to start creating.`))
 })
 
-const prompts = new Subject()
-
+// Set up initial questions
 // https://github.com/SBoudrias/Inquirer.js/blob/master/examples/rx-observable-array.js
 
-inquirer.prompt(prompts).ui.process.subscribe(
-  onEach,
-  onError, function(answers){
-  log.debug({answers})
-  ax.generate(answers) // Eventually this will be done during the prompts, and user will be prompted to approve of the generated map.
-})
+const questions = Observable.from([
+  {
+    type: 'input',
+    name: 'areaTitle',
+    message: blue('What would you like to title this area?'),
+    validate: isAlphanumeric,
+  },
+  {
+    type: 'confirm',
+    name: 'customizeAreaInfo',
+    message: blue('Would you like to further customize the area\'s manifest information?')
+  }
+])
 
-function onEach() { log.debug('onEach', arguments) }
+const prompts = new Subject()
+
+const { ui } = inquirer.prompt(prompts);
+console.log({ui});
+ui.process
+  .subscribe(
+    onEach,
+    onError,
+    (answers) => {
+      console.log({answers})
+      ax.generate(answers) // Eventually this will be done during the prompts, and user will be prompted to approve of the generated map.
+      prompts.complete()
+    }
+  )
+
+function onEach() { console.log('onEach', arguments) }
 function onError() {
-  log.error('An error has occurred:', arguments)
+  console.error('An error has occurred:', arguments)
   throw arguments[0] || 'Mystery error!'
 }
 
-prompts.next(Observable.pairs({
-  type: 'input',
-  name: 'areaTitle',
-  message: blue('What would you like to title this area?'),
-  validate: isAlphanumeric,
-}))
+console.log({prompts, questions})
 
-prompts.next(Observable.pairs({
-  type: 'confirm',
-  name: 'customizeAreaInfo',
-  message: blue('Would you like to further customize the area\'s manifest information?')
-}))
-
-prompts.complete()
-
-log.debug(prompts)
+prompts.next(questions)
