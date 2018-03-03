@@ -10,7 +10,8 @@ requiresNode('8.0.0')
 const {version} = require('../package.json')
 
 const ax = require('../')
-const {isAlphanumeric, isNumber} = require('./validation')
+const {isAlphanumeric, isPositiveNumber, isMapType, isPercentage} = require('./validation')
+const {integer, percentage} = require('./filters')
 
 cli.version(version)
 cli.on('--help', () => {
@@ -46,7 +47,8 @@ const questions = [
     when(answers) {
       return Boolean(answers.customizeAreaInfo)
     },
-    validate: isNumber,
+    filter: integer,
+    validate: isPositiveNumber,
     default: 60
   },
 
@@ -58,7 +60,8 @@ const questions = [
       const {areaTitle = 'this area'} = answers
       return blue(`What is the maximum width (x coordinate) of ${areaTitle}?`);
     },
-    validate: isNumber,
+    filter: integer,
+    validate: isPositiveNumber,
     default: 10
   },
   {
@@ -68,7 +71,8 @@ const questions = [
       const {areaTitle = 'this area'} = answers
       return blue(`What is the maximum height (y coordinate) of ${areaTitle}?`);
     },
-    validate: isNumber,
+    filter: integer,
+    validate: isPositiveNumber,
     default: 10
   },
   {
@@ -78,8 +82,9 @@ const questions = [
       const {areaTitle = 'this area'} = answers
       return blue(`What is the maximum depth (z coordinate) of ${areaTitle}?`);
     },
-    validate: isNumber,
-    default: 10,
+    validate: isPositiveNumber,
+    filter: integer,
+    default: 1,
     when: false // Not supported yet.
   },
   {
@@ -99,6 +104,106 @@ const questions = [
       'Arena',
       'Cellular'
     ]
+  },
+
+  /** Algorihm-specific settings **/
+  {
+    when: isMapType('Digger'),
+    type: 'input',
+    name: 'roomHeightMaximum',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] What will be the maximum height (y value) for each generated "room"?`)
+    },
+    filter: integer,
+    validate(input, answers) {
+      const {height} = answers
+      return (isPositiveNumber(input) && input < height) || `Please enter a numeric value that is less than ${height}.`
+    }
+  },
+  {
+    when: isMapType('Digger'),
+    type: 'input',
+    name: 'roomHeightMinimum',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] What will be the minimum height (y value) for each generated "room"?`)
+    },
+    validate(input, answers) {
+      const {roomHeightMaximum} = answers
+      return (isPositiveNumber(input) && input < roomHeightMaximum - 1) || `Please enter a numeric value that is less than ${roomHeightMaximum - 1}.`
+    },
+    filter: integer
+  },
+  {
+    when: isMapType('Digger'),
+    type: 'input',
+    name: 'roomHeightMaximum',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] What will be the maximum width (x value) for each generated "room"?`)
+    },
+    filter: integer,
+    validate(input, answers) {
+      const {width} = answers
+      return (isPositiveNumber(input) && input < height) || `Please enter a numeric value that is less than ${width}.`
+    }
+  },
+  {
+    when: isMapType('Digger'),
+    type: 'input',
+    name: 'roomHeightMinimum',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] What will be the minimum width (x value) for each generated "room"?`)
+    },
+    validate(input, answers) {
+      const {roomWidthMaximum} = answers
+      return (isPositiveNumber(input) && input < roomWidthMaximum - 1) || `Please enter a numeric value that is less than ${roomWidthMaximum - 1}.`
+    },
+    filter: integer
+  },
+  {
+    when: isMapType('Digger'),
+    type: 'input',
+    name: 'corridorLengthMaximum',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] What will be the maximum length for each generated "corridor"?`)
+    },
+    validate(input, answers) {
+      const {height, width} = answers
+      const max = Math.min(height, width)
+      return (isPositiveNumber(input) && input < height) || `Please enter a positive numeric value that is less than ${max}.`
+    },
+    filter: integer,
+  },
+  {
+    when: isMapType('Digger'),
+    type: 'input',
+    name: 'corridorLengthMinimum',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] What will be the minimum length for each generated "corridor"?`)
+    },
+    validate(input, answers) {
+      const {height, width, corridorLengthMaximum} = answers
+      const max = Math.min(height, width, corridorLengthMaximum - 1)
+      return (isPositiveNumber(input) && input < height) || `Please enter a positive numeric value that is less than ${max}.`
+    },
+    filter: integer
+  },
+  {
+    when: isMapType('Digger'),
+    type: 'input',
+    name: 'dugPercentage',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] What percentage of the map area should be turned into rooms?`)
+    },
+    default: 0.25,
+    validate: isPercentage,
+    filter: percentage
   }
 ]
 
