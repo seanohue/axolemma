@@ -1,40 +1,109 @@
 #!/usr/bin/env node
-
 const cli = require('commander')
 const inquirer = require('inquirer')
 const semver = require('semver')
-const {Subject} = require('rxjs')
+const requiresNode = require('requires-node-version')
 const {bold, green, blue, red} = require('chalk')
 
-if (semver.lt(process.version,'8.0.0')) {
-  console.log(red(`Axolemma supports Node ${bold('v8.0.0')} or higher.`))
-  console.log(red(`You are currently using ${bold(process.version)}.`))
-  return process.exit(1)
-}
+requiresNode('8.0.0')
 
 const {version} = require('../package.json')
 
 const ax = require('../')
-const {isAlphanumeric} = require('./validation')
+const {isAlphanumeric, isNumber} = require('./validation')
 
-
-
-cli.version('0.1.0')
+cli.version(version)
 cli.on('--help', () => {
   console.log(blue(`Type ${bold(green('axolemma'))} to start creating.`))
 })
 
-const prompts = new Subject()
-inquirer.prompt(prompts).ui.process.subscribe(console.log, console.log, function(answers){
-  console.log(answers)
-  ax.generate(answers) // Eventually this will be done during the prompts, and user will be prompted to approve of the generated map.
-})
+const {Separator} = inquirer
 
-prompts.next({
-  type: 'input',
-  name: 'areaTitle',
-  message: blue('What would you like to title this area?'),
-  validate: isAlphanumeric,
-})
+const questions = [
 
-prompts.complete()
+  /** General area metadata **/
+  {
+    type: 'input',
+    name: 'areaTitle',
+    message: blue('What would you like to title this area?'),
+    validate: isAlphanumeric,
+  },
+  {
+    type: 'confirm',
+    name: 'customizeAreaInfo',
+    message(answers) {
+      const {areaTitle = 'this area'} = answers
+      return blue(`Would you like to further customize ${areaTitle}? (e.g., the default mob respawn rate)`)
+    }
+  },
+  {
+    type: 'input',
+    name: 'respawnTime',
+    message(answers) {
+      const {areaTitle = 'this area'} = answers
+      return blue(`What should the default respawn rate be for ${areaTitle}? (in seconds)`)
+    },
+    when(answers) {
+      return Boolean(answers.customizeAreaInfo)
+    },
+    validate: isNumber,
+    default: 60
+  },
+
+  /** Area generation algo. input **/
+  {
+    type: 'input',
+    name: 'width',
+    message(answers) {
+      const {areaTitle = 'this area'} = answers
+      return blue(`What is the maximum width (x coordinate) of ${areaTitle}?`);
+    },
+    validate: isNumber,
+    default: 10
+  },
+  {
+    type: 'input',
+    name: 'height',
+    message(answers) {
+      const {areaTitle = 'this area'} = answers
+      return blue(`What is the maximum height (y coordinate) of ${areaTitle}?`);
+    },
+    validate: isNumber,
+    default: 10
+  },
+  {
+    type: 'input',
+    name: 'depth',
+    message(answers) {
+      const {areaTitle = 'this area'} = answers
+      return blue(`What is the maximum depth (z coordinate) of ${areaTitle}?`);
+    },
+    validate: isNumber,
+    default: 10,
+    when: false // Not supported yet.
+  },
+  {
+    type: 'list',
+    name: 'type',
+    message: blue('What generation algorithm would you like to use?'),
+    choices: [
+      new Separator('-- Mazes --'),
+      'DividedMaze',
+      'IceyMaze',
+      'EllerMaze',
+      new Separator('-- Dungeons --'),
+      'Digger',
+      'Uniform',
+      'Rogue',
+      new Separator('-- Other --'),
+      'Arena',
+      'Cellular'
+    ]
+  }
+]
+
+inquirer.prompt(questions)
+        .then(console.log)
+        .catch(console.error)
+
+
