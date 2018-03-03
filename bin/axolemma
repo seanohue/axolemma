@@ -1,32 +1,27 @@
 #!/usr/bin/env node
-const log = require('loglevel')
 const cli = require('commander')
 const inquirer = require('inquirer')
 const semver = require('semver')
 const requiresNode = require('requires-node-version')
-const {Subject, Observable} = require('rxjs/Rx')
 const {bold, green, blue, red} = require('chalk')
 
 requiresNode('8.0.0')
 
-// Obtain maximum information, for now.
-log.setLevel('info')
-
-
 const {version} = require('../package.json')
 
 const ax = require('../')
-const {isAlphanumeric} = require('./validation')
+const {isAlphanumeric, isNumber} = require('./validation')
 
-cli.version('0.1.0')
+cli.version(version)
 cli.on('--help', () => {
   console.log(blue(`Type ${bold(green('axolemma'))} to start creating.`))
 })
 
-// Set up initial questions
-// https://github.com/SBoudrias/Inquirer.js/blob/master/examples/rx-observable-array.js
+const {Separator} = inquirer
 
-const questions = Observable.from([
+const questions = [
+
+  /** General area metadata **/
   {
     type: 'input',
     name: 'areaTitle',
@@ -36,31 +31,79 @@ const questions = Observable.from([
   {
     type: 'confirm',
     name: 'customizeAreaInfo',
-    message: blue('Would you like to further customize the area\'s manifest information?')
-  }
-])
-
-const prompts = new Subject()
-
-const { ui } = inquirer.prompt(prompts);
-console.log({ui});
-ui.process
-  .subscribe(
-    onEach,
-    onError,
-    (answers) => {
-      console.log({answers})
-      ax.generate(answers) // Eventually this will be done during the prompts, and user will be prompted to approve of the generated map.
-      prompts.complete()
+    message(answers) {
+      const {areaTitle = 'this area'} = answers
+      return blue(`Would you like to further customize ${areaTitle}? (e.g., the default mob respawn rate)`)
     }
-  )
+  },
+  {
+    type: 'input',
+    name: 'respawnTime',
+    message(answers) {
+      const {areaTitle = 'this area'} = answers
+      return blue(`What should the default respawn rate be for ${areaTitle}? (in seconds)`)
+    },
+    when(answers) {
+      return Boolean(answers.customizeAreaInfo)
+    },
+    validate: isNumber,
+    default: 60
+  },
 
-function onEach() { console.log('onEach', arguments) }
-function onError() {
-  console.error('An error has occurred:', arguments)
-  throw arguments[0] || 'Mystery error!'
-}
+  /** Area generation algo. input **/
+  {
+    type: 'input',
+    name: 'width',
+    message(answers) {
+      const {areaTitle = 'this area'} = answers
+      return blue(`What is the maximum width (x coordinate) of ${areaTitle}?`);
+    },
+    validate: isNumber,
+    default: 10
+  },
+  {
+    type: 'input',
+    name: 'height',
+    message(answers) {
+      const {areaTitle = 'this area'} = answers
+      return blue(`What is the maximum height (y coordinate) of ${areaTitle}?`);
+    },
+    validate: isNumber,
+    default: 10
+  },
+  {
+    type: 'input',
+    name: 'depth',
+    message(answers) {
+      const {areaTitle = 'this area'} = answers
+      return blue(`What is the maximum depth (z coordinate) of ${areaTitle}?`);
+    },
+    validate: isNumber,
+    default: 10,
+    when: false // Not supported yet.
+  },
+  {
+    type: 'list',
+    name: 'type',
+    message: blue('What generation algorithm would you like to use?'),
+    choices: [
+      new Separator('-- Mazes --'),
+      'DividedMaze',
+      'IceyMaze',
+      'EllerMaze',
+      new Separator('-- Dungeons --'),
+      'Digger',
+      'Uniform',
+      'Rogue',
+      new Separator('-- Other --'),
+      'Arena',
+      'Cellular'
+    ]
+  }
+]
 
-console.log({prompts, questions})
+inquirer.prompt(questions)
+        .then(console.log)
+        .catch(console.error)
 
-prompts.next(questions)
+
