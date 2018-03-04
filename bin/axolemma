@@ -108,6 +108,21 @@ const questions = [
 
   /** Algorihm-specific settings **/
   {
+    when: isMapType('IceyMaze'),
+    type: 'input',
+    name: 'regularity',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] What will the regularity of this maze be? 0 = most random, higher numbers = less random.`)
+    },
+    validate: isPositiveNumber,
+    default: 0
+  },
+  {
+    when: isMapType('Cellular'),
+    type: 
+  }
+  {
     when: isMapType('Digger'),
     type: 'input',
     name: 'roomHeightMaximum',
