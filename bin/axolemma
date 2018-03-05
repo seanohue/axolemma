@@ -118,10 +118,11 @@ const questions = [
     validate: isPositiveNumber,
     default: 0
   },
-  {
-    when: isMapType('Cellular'),
-    type: 
-  }
+  // {
+  //   when: isMapType('Cellular'),
+  //   type: 'input',
+  //   name: ''
+  // }
   {
     when: isMapType('Digger'),
     type: 'input',
@@ -160,8 +161,8 @@ const questions = [
     },
     filter: integer,
     validate(input, answers) {
-      const {width} = answers
-      return (isPositiveNumber(input) && input < height) || `Please enter a numeric value that is less than ${width}.`
+      const {height} = answers
+      return (isPositiveNumber(input) && input < height) || `Please enter a numeric value that is less than ${height}.`
     }
   },
   {
@@ -173,8 +174,8 @@ const questions = [
       return blue(`[${type}] What will be the minimum width (x value) for each generated "room"?`)
     },
     validate(input, answers) {
-      const {roomWidthMaximum} = answers
-      return (isPositiveNumber(input) && input < roomWidthMaximum - 1) || `Please enter a numeric value that is less than ${roomWidthMaximum - 1}.`
+      const {roomHeightMaximum, height} = answers
+      return (isPositiveNumber(input) && input < roomHeightMaximum - 1) || `Please enter a numeric value that is less than ${roomHeightMaximum - 1}.`
     },
     filter: integer
   },
@@ -189,7 +190,7 @@ const questions = [
     validate(input, answers) {
       const {height, width} = answers
       const max = Math.min(height, width)
-      return (isPositiveNumber(input) && input < height) || `Please enter a positive numeric value that is less than ${max}.`
+      return (isPositiveNumber(input) && input < max) || `Please enter a positive numeric value that is less than ${max}.`
     },
     filter: integer,
   },
@@ -204,7 +205,7 @@ const questions = [
     validate(input, answers) {
       const {height, width, corridorLengthMaximum} = answers
       const max = Math.min(height, width, corridorLengthMaximum - 1)
-      return (isPositiveNumber(input) && input < height) || `Please enter a positive numeric value that is less than ${max}.`
+      return (isPositiveNumber(input) && input < max) || `Please enter a positive numeric value that is less than ${max}.`
     },
     filter: integer
   },

@@ -16,7 +16,7 @@ function isMapType(...types) {
 }
 
 function isPositiveNumber(input) {
-  return (isNumber(input) === true && input > 0) || 'Please enter a positive number.'
+  return (isNumber(input) === true && input >= 1) || 'Please enter a positive number.'
 }
 
 function isPercentage(input) {
