@@ -3,6 +3,7 @@ const cli = require('commander')
 const inquirer = require('inquirer')
 const semver = require('semver')
 const requiresNode = require('requires-node-version')
+const pretty = require('pretty-print')
 const {bold, green, blue, red} = require('chalk')
 
 requiresNode('8.0.0')
@@ -47,7 +48,7 @@ const questions = [
     when(answers) {
       return Boolean(answers.customizeAreaInfo)
     },
-    filter: integer,
+    filter: toInteger,
     validate: isPositiveNumber,
     default: 60
   },
@@ -60,7 +61,7 @@ const questions = [
       const {areaTitle = 'this area'} = answers
       return blue(`What is the maximum width (x coordinate) of ${areaTitle}?`);
     },
-    filter: integer,
+    filter: toInteger,
     validate: isPositiveNumber,
     default: 10
   },
@@ -71,7 +72,7 @@ const questions = [
       const {areaTitle = 'this area'} = answers
       return blue(`What is the maximum height (y coordinate) of ${areaTitle}?`);
     },
-    filter: integer,
+    filter: toInteger,
     validate: isPositiveNumber,
     default: 10
   },
@@ -83,7 +84,7 @@ const questions = [
       return blue(`What is the maximum depth (z coordinate) of ${areaTitle}?`);
     },
     validate: isPositiveNumber,
-    filter: integer,
+    filter: toInteger,
     default: 1,
     when: false // Not supported yet.
   },
@@ -131,7 +132,7 @@ const questions = [
       const {type} = answers
       return blue(`[${type}] What will be the maximum height (y value) for each generated "room"?`)
     },
-    filter: integer,
+    filter: toInteger,
     validate(input, answers) {
       const {height} = answers
       return (isPositiveNumber(input) && input < height) || `Please enter a numeric value that is less than ${height}.`
@@ -149,7 +150,7 @@ const questions = [
       const {roomHeightMaximum} = answers
       return (isPositiveNumber(input) && input < roomHeightMaximum - 1) || `Please enter a numeric value that is less than ${roomHeightMaximum - 1}.`
     },
-    filter: integer
+    filter: toInteger
   },
   {
     when: isMapType('Digger'),
@@ -159,7 +160,7 @@ const questions = [
       const {type} = answers
       return blue(`[${type}] What will be the maximum width (x value) for each generated "room"?`)
     },
-    filter: integer,
+    filter: toInteger,
     validate(input, answers) {
       const {height} = answers
       return (isPositiveNumber(input) && input < height) || `Please enter a numeric value that is less than ${height}.`
@@ -177,7 +178,7 @@ const questions = [
       const {roomHeightMaximum, height} = answers
       return (isPositiveNumber(input) && input < roomHeightMaximum - 1) || `Please enter a numeric value that is less than ${roomHeightMaximum - 1}.`
     },
-    filter: integer
+    filter: toInteger
   },
   {
     when: isMapType('Digger'),
@@ -220,6 +221,32 @@ const questions = [
     default: 0.25,
     validate: isPercentage,
     filter: toPercentage
+  },
+  {
+    when: isMapType('Digger'),
+    type: 'input',
+    name: 'timeLimit',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] How long do you want to wait before causing the algorithm to time out (in ms)?`)
+    },
+    default: 60 * 1000,
+    validate: isPositiveNumber
+  },
+
+  /** Confirmation steps. **/
+  {
+    type: 'confirm',
+    name: 'confirmedSettings',
+    message(answers) {
+      const printable = Object.assign({}, answers)
+
+      // Delete props we won't pass to the final builder.
+      delete printable.customizeAreaInfo;
+
+      pretty(printable)
+      return blue('Confirm settings before generating?')
+    }
   }
 ]
 
