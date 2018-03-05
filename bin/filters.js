@@ -1,8 +1,8 @@
 module.exports = {
-  integer(input) {
+  toInteger(input) {
     return parseInt(input, 10);
   },
-  percentage(input) {
+  toPercentage(input) {
     if (input < 1) {
       return input
     }

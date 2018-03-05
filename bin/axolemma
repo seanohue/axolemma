@@ -11,7 +11,7 @@ const {version} = require('../package.json')
 
 const ax = require('../')
 const {isAlphanumeric, isPositiveNumber, isMapType, isPercentage} = require('./validation')
-const {integer, percentage} = require('./filters')
+const {toInteger, toPercentage} = require('./filters')
 
 cli.version(version)
 cli.on('--help', () => {
@@ -192,7 +192,7 @@ const questions = [
       const max = Math.min(height, width)
       return (isPositiveNumber(input) && input < max) || `Please enter a positive numeric value that is less than ${max}.`
     },
-    filter: integer,
+    filter: toInteger,
   },
   {
     when: isMapType('Digger'),
@@ -207,7 +207,7 @@ const questions = [
       const max = Math.min(height, width, corridorLengthMaximum - 1)
       return (isPositiveNumber(input) && input < max) || `Please enter a positive numeric value that is less than ${max}.`
     },
-    filter: integer
+    filter: toInteger
   },
   {
     when: isMapType('Digger'),
@@ -219,7 +219,7 @@ const questions = [
     },
     default: 0.25,
     validate: isPercentage,
-    filter: percentage
+    filter: toPercentage
   }
 ]
 
