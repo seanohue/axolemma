@@ -20,6 +20,7 @@ cli.on('--help', () => {
 })
 
 const {Separator} = inquirer
+const STATE = {}
 
 const questions = [
 
@@ -263,7 +264,7 @@ const questions = [
       }
       return true;
     },
-    async message(answers) {
+    message(answers) {
       console.log(blue('Generating map...'));
       const overrides = {
         writeToFile: false //true if not in testing.
@@ -272,13 +273,27 @@ const questions = [
         answers,
         overrides
       )
-      const mapData = await ax.generate(options)
+      const {graphic, buildCallback} = ax.generate(options)
+      STATE.buildCallback = buildCallback
+      STATE.rooms = rooms
+      console.log(bold(graphic));
+      return blue('Would you like to write this map to disk?')
     }
   }
 ]
 
 inquirer.prompt(questions)
-        .then(console.log)
+        .then(function(answers) {
+          if (answers.confirmedGeneratedMap && STATE.buildCallback) {
+            STATE.buildCallback(/* true for write to file? */)
+          } else {
+            console.log(red('Try, try again...'))
+            console.log('Here are the rooms in case you change your mind:')
+            console.log(STATE.rooms)
+            process.exit(1)
+          }
+          process.exit(0)
+        })
         .catch(console.error)
 
 
