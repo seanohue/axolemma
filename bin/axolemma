@@ -247,6 +247,33 @@ const questions = [
       pretty(printable)
       return blue('Confirm settings before generating?')
     }
+  },
+
+  {
+    type: 'confirm',
+    name: 'confirmedGeneratedMap',
+    when(answers) {
+      const {confirmedSettings} = answers;
+
+      // Cheap. Have it restart from beginning instead
+      // or allow user to edit options directly using editor mode.
+      if (!confirmedSettings) {
+        console.log(red('Try, try again.'));
+        process.exit(1);
+      }
+      return true;
+    },
+    async message(answers) {
+      console.log(blue('Generating map...'));
+      const overrides = {
+        writeToFile: false //true if not in testing.
+      }
+      const axOptions = Object.assign({},
+        answers,
+        overrides
+      )
+      const mapData = await ax.generate(options)
+    }
   }
 ]
 
