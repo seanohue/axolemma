@@ -273,7 +273,7 @@ const questions = [
         answers,
         overrides
       )
-      const {graphic, buildCallback} = ax.generate(options)
+      const {graphic, buildCallback} = ax.generate(axOptions)
       STATE.buildCallback = buildCallback
       STATE.rooms = rooms
       console.log(bold(graphic));
