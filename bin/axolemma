@@ -273,10 +273,10 @@ const questions = [
         answers,
         overrides
       )
-      const {graphic, buildCallback} = ax.generate(axOptions)
+      const {graphic, buildCallback, rooms} = ax.generate(axOptions)
       STATE.buildCallback = buildCallback
       STATE.rooms = rooms
-      console.log(bold(graphic));
+      console.log(bold(graphic))
       return blue('Would you like to write this map to disk?')
     }
   }
