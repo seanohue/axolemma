@@ -16,8 +16,16 @@ module.exports = function generator (options = {}) {
     depth = 0,
     type = 'Uniform',
     roomDugPercentage = 0.25,
+    dugPercentage = 0.25,
     timeLimit = 60 * 1000,
-    mapperOptions = {}
+    mapperOptions = {},
+    roomHeightMaximum,
+    roomHeightMinimum,
+    roomWidthMaximum,
+    roomWidthMinimum,
+    corridorLengthMinimum,
+    corridorLengthMaximum,
+    regularity
   } = options
 
   // Make just a 2D map as MVP.
@@ -28,7 +36,16 @@ module.exports = function generator (options = {}) {
     }
 
     const _mapperOptions = Object.assign({}, mapperOptions, {
-      roomDugPercentage, timeLimit
+      roomHeightMaximum,
+      roomHeightMinimum,
+      roomWidthMaximum,
+      roomWidthMinimum,
+      corridorLengthMinimum,
+      corridorLengthMaximum,
+      regularity,
+      dugPercentage,
+      roomDugPercentage,
+      timeLimit
     })
 
     const mapper = new Mapper(width, height, _mapperOptions)

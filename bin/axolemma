@@ -270,11 +270,15 @@ const questions = [
       const overrides = {
         writeToFile: false //true if not in testing.
       }
+
+      // Same option for Digger and Uniform dungeons, but different key name.
+      answers.roomDugPercentage = answers.dugPercentage;
+
       const axOptions = Object.assign({},
         answers,
         overrides
       )
-      const {graphic, buildCallback, rooms} = ax.generate(axOptions)
+      const {graphic, buildCallback, rooms} = ax.generate(axOptions, true)
       STATE.buildCallback = buildCallback
       STATE.rooms = rooms
       console.log('LEGEND:\t. = room\t# = empty')
@@ -286,13 +290,13 @@ const questions = [
 
 inquirer.prompt(questions)
         .then(function(answers) {
+          console.log({answers, STATE})
           if (answers.confirmedGeneratedMap && STATE.buildCallback) {
             const build = STATE.buildCallback(/* true for write to file? */)
             console.log(build)
           } else {
             console.log(red('Try, try again...'))
             console.log('Here are the rooms in case you change your mind:')
-            console.log(STATE.rooms)
             process.exit(1)
           }
           process.exit(0)
