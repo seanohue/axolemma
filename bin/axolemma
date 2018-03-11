@@ -109,6 +109,8 @@ const questions = [
   },
 
   /** Algorihm-specific settings **/
+
+  /** IceyMaze settings**/
   {
     when: isMapType('IceyMaze'),
     type: 'input',
@@ -120,13 +122,10 @@ const questions = [
     validate: isPositiveNumber,
     default: 0
   },
-  // {
-  //   when: isMapType('Cellular'),
-  //   type: 'input',
-  //   name: ''
-  // }
+
+  /** Digger & Uniform settings**/
   {
-    when: isMapType('Digger'),
+    when: isMapType('Digger', 'Uniform'),
     type: 'input',
     name: 'roomHeightMaximum',
     message(answers) {
@@ -140,7 +139,7 @@ const questions = [
     }
   },
   {
-    when: isMapType('Digger'),
+    when: isMapType('Digger', 'Uniform'),
     type: 'input',
     name: 'roomHeightMinimum',
     message(answers) {
@@ -154,7 +153,7 @@ const questions = [
     filter: toInteger
   },
   {
-    when: isMapType('Digger'),
+    when: isMapType('Digger', 'Uniform'),
     type: 'input',
     name: 'roomHeightMaximum',
     message(answers) {
@@ -168,7 +167,7 @@ const questions = [
     }
   },
   {
-    when: isMapType('Digger'),
+    when: isMapType('Digger', 'Uniform'),
     type: 'input',
     name: 'roomHeightMinimum',
     message(answers) {
@@ -181,6 +180,31 @@ const questions = [
     },
     filter: toInteger
   },
+  {
+    when: isMapType('Digger', 'Uniform'),
+    type: 'input',
+    name: 'dugPercentage',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] What percentage of the map area should be turned into rooms?`)
+    },
+    default: 0.25,
+    validate: isPercentage,
+    filter: toPercentage
+  },
+  {
+    when: isMapType('Digger', 'Uniform'),
+    type: 'input',
+    name: 'timeLimit',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] How long do you want to wait before causing the algorithm to time out (in ms)?`)
+    },
+    default: 60 * 1000,
+    validate: isPositiveNumber
+  },
+
+  /** Digger-only settings **/
   {
     when: isMapType('Digger'),
     type: 'input',
@@ -210,29 +234,6 @@ const questions = [
       return (isPositiveNumber(input) && input < max) || `Please enter a positive numeric value that is less than ${max}.`
     },
     filter: toInteger
-  },
-  {
-    when: isMapType('Digger'),
-    type: 'input',
-    name: 'dugPercentage',
-    message(answers) {
-      const {type} = answers
-      return blue(`[${type}] What percentage of the map area should be turned into rooms?`)
-    },
-    default: 0.25,
-    validate: isPercentage,
-    filter: toPercentage
-  },
-  {
-    when: isMapType('Digger'),
-    type: 'input',
-    name: 'timeLimit',
-    message(answers) {
-      const {type} = answers
-      return blue(`[${type}] How long do you want to wait before causing the algorithm to time out (in ms)?`)
-    },
-    default: 60 * 1000,
-    validate: isPositiveNumber
   },
 
   /** Confirmation steps. **/
@@ -276,6 +277,7 @@ const questions = [
       const {graphic, buildCallback, rooms} = ax.generate(axOptions)
       STATE.buildCallback = buildCallback
       STATE.rooms = rooms
+      console.log('LEGEND:\t. = room\t# = empty')
       console.log(bold(graphic))
       return blue('Would you like to write this map to disk?')
     }
@@ -285,7 +287,8 @@ const questions = [
 inquirer.prompt(questions)
         .then(function(answers) {
           if (answers.confirmedGeneratedMap && STATE.buildCallback) {
-            STATE.buildCallback(/* true for write to file? */)
+            const build = STATE.buildCallback(/* true for write to file? */)
+            console.log(build)
           } else {
             console.log(red('Try, try again...'))
             console.log('Here are the rooms in case you change your mind:')
