@@ -28,7 +28,6 @@ module.exports = {
       pkg = require(pkgPath)
     }
 
-    console.log({axConfig, pkg})
     return Object.assign({},
       axConfig,
       pkg.axolemma || {}

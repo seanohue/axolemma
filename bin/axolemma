@@ -290,10 +290,8 @@ const questions = [
 
 inquirer.prompt(questions)
         .then(function(answers) {
-          console.log({answers, STATE})
           if (answers.confirmedGeneratedMap && STATE.buildCallback) {
-            const build = STATE.buildCallback(/* true for write to file? */)
-            console.log(build)
+            const build = STATE.buildCallback(true);
           } else {
             console.log(red('Try, try again...'))
             console.log('Here are the rooms in case you change your mind:')

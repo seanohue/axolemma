@@ -44,11 +44,11 @@ module.exports = {
       return {graphic, rooms, buildCallback}
     }
 
-    return buildCallback()
+    return buildCallback(configuredOptions.writeToFile)
 
-    function buildCallback() {
+    function buildCallback(shouldWrite) {
       const yaml = parse(configuredOptions, rooms)
-      if (writeToFile) {
+      if (shouldWrite) {
         write(yaml, configuredOptions)
       }
       return { graphic, rooms, yaml }
