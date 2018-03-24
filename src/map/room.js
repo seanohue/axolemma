@@ -1,9 +1,9 @@
 const dashify = require('dashify')
 
 module.exports = class Room {
-  constructor () {
-    this.title = 'An Empty Room'
-    this.description = 'There is nothing particularly interesting about this place.'
+  constructor (config) {
+    this.title = config.title
+    this.description = config.description
     this.x = NaN
     this.y = NaN
     this.z = NaN

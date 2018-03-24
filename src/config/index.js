@@ -28,6 +28,10 @@ module.exports = {
       pkg = require(pkgPath)
     }
 
+    const pkgConfig = typeof pkg.axolemma === 'object'
+      ? pkg.axolemma
+      : {}
+
     return Object.assign({},
       axConfig,
       pkg.axolemma || {}

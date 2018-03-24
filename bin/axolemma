@@ -54,6 +54,21 @@ const questions = [
     default: 60
   },
 
+  /** Room information, generic **/
+  {
+    type: 'input',
+    name: 'genericRoomTitle',
+    message: blue('What would you like to use as the title for your generated rooms?'),
+    default: 'An Empty Room'
+  },
+
+  {
+    type: 'input',
+    name: 'genericRoomDesc',
+    message: blue('What would you like to use as the `look` description for your generated rooms?'),
+    default: 'An Empty Room'
+  },
+
   /** Area generation algo. input **/
   {
     type: 'input',

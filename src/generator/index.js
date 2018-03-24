@@ -19,6 +19,8 @@ module.exports = function generator (options = {}) {
     dugPercentage = 0.25,
     timeLimit = 60 * 1000,
     mapperOptions = {},
+    genericRoomTitle = 'An Empty Room',
+    genericRoomDesc = 'There is nothing particularly interesting about this place.',
     roomHeightMaximum,
     roomHeightMinimum,
     roomWidthMaximum,
@@ -45,7 +47,9 @@ module.exports = function generator (options = {}) {
       regularity,
       dugPercentage,
       roomDugPercentage,
-      timeLimit
+      timeLimit,
+      genericRoomTitle,
+      genericRoomDesc
     })
 
     const mapper = new Mapper(width, height, _mapperOptions)
