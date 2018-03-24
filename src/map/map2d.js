@@ -3,6 +3,7 @@ const {noop} = require('../util')
 
 module.exports = class Map2D {
   constructor (config = {}) {
+    this.config = config
     const {height, width, zLevel = 0} = config
     this.height = height
     this.width = width
@@ -26,7 +27,12 @@ module.exports = class Map2D {
     let id = 0
     mapper.create((x, y, value) => {
       if (value) return // Already done.
-      const room = new Room()
+      const title = this.config.title
+      const description = this.config.description
+      const room = new Room({
+        title,
+        description
+      })
       this.map[x][y] = room
       room.setCoordinates(x, y, this.zLevel)
       room.setId(id++)

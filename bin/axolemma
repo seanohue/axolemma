@@ -134,7 +134,11 @@ const questions = [
       const {type} = answers
       return blue(`[${type}] What will the regularity of this maze be? 0 = most random, higher numbers = less random.`)
     },
-    validate: isPositiveNumber,
+    validate(...args) {
+      return args[0] < 0 
+      ? 'Input a non-negative number, including zero.'
+      : isPositiveNumber(...args)
+    },
     default: 0
   },
 

@@ -57,8 +57,9 @@ module.exports = function generator (options = {}) {
     try {
       map.create(mapper)
     } catch (error) {
-      console.log(`Error when creating map. Please ensure options are correct for ROT-js map type ${type}.`)
-      throw error
+      const msg = `Error when creating map. Please ensure options are correct for ROT-js map type ${type}.`
+      console.log(msg)
+      throw error || msg
     }
 
     return {
