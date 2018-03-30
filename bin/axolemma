@@ -3,6 +3,7 @@ const cli = require('commander')
 const inquirer = require('inquirer')
 const semver = require('semver')
 const requiresNode = require('requires-node-version')
+const pretty = require('pretty-print')
 const {bold, green, blue, red} = require('chalk')
 
 requiresNode('8.0.0')
@@ -10,7 +11,8 @@ requiresNode('8.0.0')
 const {version} = require('../package.json')
 
 const ax = require('../')
-const {isAlphanumeric, isNumber} = require('./validation')
+const {isAlphanumeric, isPositiveNumber, isMapType, isPercentage} = require('./validation')
+const {toInteger, toPercentage} = require('./filters')
 
 cli.version(version)
 cli.on('--help', () => {
@@ -18,6 +20,7 @@ cli.on('--help', () => {
 })
 
 const {Separator} = inquirer
+const STATE = {}
 
 const questions = [
 
@@ -46,8 +49,24 @@ const questions = [
     when(answers) {
       return Boolean(answers.customizeAreaInfo)
     },
-    validate: isNumber,
+    filter: toInteger,
+    validate: isPositiveNumber,
     default: 60
+  },
+
+  /** Room information, generic **/
+  {
+    type: 'input',
+    name: 'genericRoomTitle',
+    message: blue('What would you like to use as the title for your generated rooms?'),
+    default: 'An Empty Room'
+  },
+
+  {
+    type: 'input',
+    name: 'genericRoomDesc',
+    message: blue('What would you like to use as the `look` description for your generated rooms?'),
+    default: 'An Empty Room'
   },
 
   /** Area generation algo. input **/
@@ -58,7 +77,8 @@ const questions = [
       const {areaTitle = 'this area'} = answers
       return blue(`What is the maximum width (x coordinate) of ${areaTitle}?`);
     },
-    validate: isNumber,
+    filter: toInteger,
+    validate: isPositiveNumber,
     default: 10
   },
   {
@@ -68,7 +88,8 @@ const questions = [
       const {areaTitle = 'this area'} = answers
       return blue(`What is the maximum height (y coordinate) of ${areaTitle}?`);
     },
-    validate: isNumber,
+    filter: toInteger,
+    validate: isPositiveNumber,
     default: 10
   },
   {
@@ -78,8 +99,9 @@ const questions = [
       const {areaTitle = 'this area'} = answers
       return blue(`What is the maximum depth (z coordinate) of ${areaTitle}?`);
     },
-    validate: isNumber,
-    default: 10,
+    validate: isPositiveNumber,
+    filter: toInteger,
+    default: 1,
     when: false // Not supported yet.
   },
   {
@@ -99,11 +121,202 @@ const questions = [
       'Arena',
       'Cellular'
     ]
+  },
+
+  /** Algorihm-specific settings **/
+
+  /** IceyMaze settings**/
+  {
+    when: isMapType('IceyMaze'),
+    type: 'input',
+    name: 'regularity',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] What will the regularity of this maze be? 0 = most random, higher numbers = less random.`)
+    },
+    validate(...args) {
+      const isNonNegativeInt = Math.floor(args[0]) >= -1
+      return isNonNegativeInt || 'Input a non-negative number, including zero.'
+    },
+    default: 0
+  },
+
+  /** Digger & Uniform settings**/
+  {
+    when: isMapType('Digger', 'Uniform'),
+    type: 'input',
+    name: 'roomHeightMaximum',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] What will be the maximum height (y value) for each generated "room"?`)
+    },
+    filter: toInteger,
+    validate(input, answers) {
+      const {height} = answers
+      return (isPositiveNumber(input) && input < height) || `Please enter a numeric value that is less than ${height}.`
+    }
+  },
+  {
+    when: isMapType('Digger', 'Uniform'),
+    type: 'input',
+    name: 'roomHeightMinimum',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] What will be the minimum height (y value) for each generated "room"?`)
+    },
+    validate(input, answers) {
+      const {roomHeightMaximum} = answers
+      return (isPositiveNumber(input) && input < roomHeightMaximum - 1) || `Please enter a numeric value that is less than ${roomHeightMaximum - 1}.`
+    },
+    filter: toInteger
+  },
+  {
+    when: isMapType('Digger', 'Uniform'),
+    type: 'input',
+    name: 'roomHeightMaximum',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] What will be the maximum width (x value) for each generated "room"?`)
+    },
+    filter: toInteger,
+    validate(input, answers) {
+      const {height} = answers
+      return (isPositiveNumber(input) && input < height) || `Please enter a numeric value that is less than ${height}.`
+    }
+  },
+  {
+    when: isMapType('Digger', 'Uniform'),
+    type: 'input',
+    name: 'roomHeightMinimum',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] What will be the minimum width (x value) for each generated "room"?`)
+    },
+    validate(input, answers) {
+      const {roomHeightMaximum, height} = answers
+      return (isPositiveNumber(input) && input < roomHeightMaximum - 1) || `Please enter a numeric value that is less than ${roomHeightMaximum - 1}.`
+    },
+    filter: toInteger
+  },
+  {
+    when: isMapType('Digger', 'Uniform'),
+    type: 'input',
+    name: 'dugPercentage',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] What percentage of the map area should be turned into rooms?`)
+    },
+    default: 0.25,
+    validate: isPercentage,
+    filter: toPercentage
+  },
+  {
+    when: isMapType('Digger', 'Uniform'),
+    type: 'input',
+    name: 'timeLimit',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] How long do you want to wait before causing the algorithm to time out (in ms)?`)
+    },
+    default: 60 * 1000,
+    validate: isPositiveNumber
+  },
+
+  /** Digger-only settings **/
+  {
+    when: isMapType('Digger'),
+    type: 'input',
+    name: 'corridorLengthMaximum',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] What will be the maximum length for each generated "corridor"?`)
+    },
+    validate(input, answers) {
+      const {height, width} = answers
+      const max = Math.min(height, width)
+      return (isPositiveNumber(input) && input < max) || `Please enter a positive numeric value that is less than ${max}.`
+    },
+    filter: toInteger,
+  },
+  {
+    when: isMapType('Digger'),
+    type: 'input',
+    name: 'corridorLengthMinimum',
+    message(answers) {
+      const {type} = answers
+      return blue(`[${type}] What will be the minimum length for each generated "corridor"?`)
+    },
+    validate(input, answers) {
+      const {height, width, corridorLengthMaximum} = answers
+      const max = Math.min(height, width, corridorLengthMaximum - 1)
+      return (isPositiveNumber(input) && input < max) || `Please enter a positive numeric value that is less than ${max}.`
+    },
+    filter: toInteger
+  },
+
+  /** Confirmation steps. **/
+  {
+    type: 'confirm',
+    name: 'confirmedSettings',
+    message(answers) {
+      const printable = Object.assign({}, answers)
+
+      // Delete props we won't pass to the final builder.
+      delete printable.customizeAreaInfo;
+
+      pretty(printable)
+      return blue('Confirm settings before generating?')
+    }
+  },
+
+  {
+    type: 'confirm',
+    name: 'confirmedGeneratedMap',
+    when(answers) {
+      const {confirmedSettings} = answers;
+
+      // Cheap. Have it restart from beginning instead
+      // or allow user to edit options directly using editor mode.
+      if (!confirmedSettings) {
+        console.log(red('Try, try again.'));
+        process.exit(1);
+      }
+      return true;
+    },
+    message(answers) {
+      console.log(blue('Generating map...'));
+      const overrides = {
+        writeToFile: false //true if not in testing.
+      }
+
+      // Same option for Digger and Uniform dungeons, but different key name.
+      answers.roomDugPercentage = answers.dugPercentage;
+
+      const axOptions = Object.assign({},
+        answers,
+        overrides
+      )
+      const {graphic, buildCallback, rooms} = ax.generate(axOptions, true)
+      STATE.buildCallback = buildCallback
+      STATE.rooms = rooms
+      console.log('LEGEND:\t. = room\t# = empty')
+      console.log(bold(graphic))
+      return blue('Would you like to write this map to disk?')
+    }
   }
 ]
 
 inquirer.prompt(questions)
-        .then(console.log)
+        .then(function(answers) {
+          if (answers.confirmedGeneratedMap && STATE.buildCallback) {
+            const build = STATE.buildCallback(true);
+          } else {
+            console.log(red('Try, try again...'))
+            console.log('Here are the rooms in case you change your mind:')
+            process.exit(1)
+          }
+          process.exit(0)
+        })
         .catch(console.error)
 
 

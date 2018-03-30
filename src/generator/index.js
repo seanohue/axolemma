@@ -16,8 +16,18 @@ module.exports = function generator (options = {}) {
     depth = 0,
     type = 'Uniform',
     roomDugPercentage = 0.25,
+    dugPercentage = 0.25,
     timeLimit = 60 * 1000,
-    mapperOptions = {}
+    mapperOptions = {},
+    genericRoomTitle = 'An Empty Room',
+    genericRoomDesc = 'There is nothing particularly interesting about this place.',
+    roomHeightMaximum,
+    roomHeightMinimum,
+    roomWidthMaximum,
+    roomWidthMinimum,
+    corridorLengthMinimum,
+    corridorLengthMaximum,
+    regularity
   } = options
 
   // Make just a 2D map as MVP.
@@ -28,16 +38,33 @@ module.exports = function generator (options = {}) {
     }
 
     const _mapperOptions = Object.assign({}, mapperOptions, {
-      roomDugPercentage, timeLimit
+      roomHeightMaximum,
+      roomHeightMinimum,
+      roomWidthMaximum,
+      roomWidthMinimum,
+      corridorLengthMinimum,
+      corridorLengthMaximum,
+      regularity,
+      dugPercentage,
+      roomDugPercentage,
+      timeLimit,
+      genericRoomTitle,
+      genericRoomDesc
     })
 
     const mapper = new Mapper(width, height, _mapperOptions)
-    const map = new Map2D({width, height})
+    const map = new Map2D({
+      title: genericRoomTitle,
+      description: genericRoomDesc,
+      width,
+      height
+    })
     try {
       map.create(mapper)
     } catch (error) {
-      console.log(`Error when creating map. Please ensure options are correct for ROT-js map type ${type}.`)
-      throw error
+      const msg = `Error when creating map. Please ensure options are correct for ROT-js map type ${type}.`
+      console.log(msg)
+      throw error || msg
     }
 
     return {

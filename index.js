@@ -17,25 +17,20 @@ const {getOptions} = require('./src/config')
   * @property {string} [filepath] Path to write YAML to. Defaults to current working directory
   * @property {string} [areaTitle] Title of area to generate. Defaults to 'Generated Area'
   * @property {Object} [areaInfo] Info object for area manifest. Defaults to object with respawnInterval property set to 60.
+  * @property {string} [genericRoomTitle] A title to be used for all of the rooms in your generated area. Defaults to 'An Empty Room'.
+  * @property {string} [genericRoomDesc] A description to be used for all of the rooms in your generated area. Defaults to 'There is nothing particularly interesting about this place.'
   * @property {string} [type] The 'type' of map creator to use. This must be the name of a ROT-js Map constructor. Defaults to 'Uniform'.
   * @property {number} [roomDugPercentage] Percentage in decimal of map coordinates to be turned into rooms. Defaults to 0.25 (25%).
   * @property {timeLimit} [number] Amount of ms to wait for the ROT-js map generator algorithms to complete before giving up. Defaults to 60,000 (one minute).
   */
 
-/**
- * @typedef {Function} AsyncFunction
- * @returns {Promise}
- * @async
- */
-
 module.exports = {
   /**
    *
    * @param {AxolemmaOptions} [options]
-   * @param {AsyncFunction} [promptAsync]
-   * @async
+   * @param {Boolean} [giveCallback]
    */
-  async generate (options = {}, promptAsync = resolveTrue) {
+  generate (options = {}, giveCallback) {
     const configuredOptions = Object.assign({},
       getOptions(),
       options
@@ -45,18 +40,20 @@ module.exports = {
       writeToFile = false
     } = configuredOptions
 
-    let goAhead = false
-    while (!goAhead) {
-      const {graphic, rooms} = generator(configuredOptions)
-      console.log(`Generated an area with ${rooms.length} rooms.\n${graphic}`)
-      goAhead = await promptAsync(graphic, rooms.length)
-      if (goAhead) {
-        const yaml = parse(configuredOptions, rooms)
-        if (writeToFile) {
-          write(yaml, configuredOptions)
-        }
-        return { graphic, rooms, yaml }
+    const {graphic, rooms} = generator(configuredOptions)
+    console.log(`Generated an area with ${rooms.length} rooms.\n${graphic}`)
+    if (giveCallback) {
+      return {graphic, rooms, buildCallback}
+    }
+
+    return buildCallback(configuredOptions.writeToFile)
+
+    function buildCallback(shouldWrite) {
+      const yaml = parse(configuredOptions, rooms)
+      if (shouldWrite) {
+        write(yaml, configuredOptions)
       }
+      return { graphic, rooms, yaml }
     }
   },
 

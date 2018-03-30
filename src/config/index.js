@@ -16,9 +16,22 @@ module.exports = {
       module: true
     }
 
-    const axConfig = require(findConfig('.axolemmaconfig', configFinderOptions)) || {}
-    const pkg = require(findConfig('package.json', configFinderOptions)) || {}
-    console.log({axConfig, pkg})
+    const axConfigPath = findConfig('.axolemmaconfig', configFinderOptions);
+    const pkgPath = findConfig('package.json', configFinderOptions);
+
+    let axConfig = {}
+    let pkg = {}
+    if (axConfigPath) {
+      axConfig = require(axConfigPath)
+    }
+    if (pkgPath) {
+      pkg = require(pkgPath)
+    }
+
+    const pkgConfig = typeof pkg.axolemma === 'object'
+      ? pkg.axolemma
+      : {}
+
     return Object.assign({},
       axConfig,
       pkg.axolemma || {}

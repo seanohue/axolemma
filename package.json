@@ -1,8 +1,11 @@
 {
   "name": "axolemma",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A tool to procedurally generate areas compatible with the Ranvier MUD engine.",
   "main": "index.js",
+  "bin": {
+    "axolemma": "bin/axolemma"
+  },
   "scripts": {
     "test": "mocha ./src/**/*.spec.js",
     "lint": "standard ./**/*.js --fix"
@@ -23,6 +26,7 @@
     "find-config": "^1.0.0",
     "js-yaml": "^3.10.0",
     "loglevel": "^1.6.1",
+    "pretty-print": "^1.1.0",
     "requires-node-version": "^1.0.0",
     "rot-js": "^0.6.5",
     "rxjs": "^5.5.6"
