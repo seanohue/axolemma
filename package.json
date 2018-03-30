@@ -22,6 +22,7 @@
   "author": "Sean O'Donohue",
   "license": "MIT",
   "dependencies": {
+    "commander": "^2.15.1",
     "dashify": "^1.0.0",
     "find-config": "^1.0.0",
     "js-yaml": "^3.10.0",

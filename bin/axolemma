@@ -312,7 +312,6 @@ inquirer.prompt(questions)
             const build = STATE.buildCallback(true);
           } else {
             console.log(red('Try, try again...'))
-            console.log('Here are the rooms in case you change your mind:')
             process.exit(1)
           }
           process.exit(0)
