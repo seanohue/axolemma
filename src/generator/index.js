@@ -53,7 +53,12 @@ module.exports = function generator (options = {}) {
     })
 
     const mapper = new Mapper(width, height, _mapperOptions)
-    const map = new Map2D({width, height})
+    const map = new Map2D({
+      title: genericRoomTitle,
+      description: genericRoomDesc,
+      width,
+      height
+    })
     try {
       map.create(mapper)
     } catch (error) {

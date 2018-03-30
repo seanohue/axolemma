@@ -11,6 +11,14 @@ Axolemma
 
 ## How to Use
 
+Axolemma is usable as a CLI tool and can also be used as a library.
+
+To use it as a CLI tool, navigate to the working directory where you would like Axolemma to generate the map files, and type `axolemma`.
+
+Axolemma will ask a series of questions and, as a result, generate an area for you.
+
+Here is a recipe for using Axolemma programmatically:
+
 ```javascript
 // Require-able like any other library.
 const Axolemma = require('axolemma')
