@@ -17,6 +17,8 @@ const {getOptions} = require('./src/config')
   * @property {string} [filepath] Path to write YAML to. Defaults to current working directory
   * @property {string} [areaTitle] Title of area to generate. Defaults to 'Generated Area'
   * @property {Object} [areaInfo] Info object for area manifest. Defaults to object with respawnInterval property set to 60.
+  * @property {string} [genericRoomTitle] A title to be used for all of the rooms in your generated area. Defaults to 'An Empty Room'.
+  * @property {string} [genericRoomDesc] A description to be used for all of the rooms in your generated area. Defaults to 'There is nothing particularly interesting about this place.'
   * @property {string} [type] The 'type' of map creator to use. This must be the name of a ROT-js Map constructor. Defaults to 'Uniform'.
   * @property {number} [roomDugPercentage] Percentage in decimal of map coordinates to be turned into rooms. Defaults to 0.25 (25%).
   * @property {timeLimit} [number] Amount of ms to wait for the ROT-js map generator algorithms to complete before giving up. Defaults to 60,000 (one minute).
