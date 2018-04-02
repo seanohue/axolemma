@@ -69,7 +69,7 @@ module.exports = function generator (options = {}) {
 
     return {
       graphic: map.draw(),
-      rooms: map.getAllRooms()
+      rooms: map.getAllRooms().map(room => room.serialize())
     }
   } else {
     throw new Error('3D areas are as of yet unsupported. Omit the Z value for your map.')
