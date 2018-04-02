@@ -45,7 +45,7 @@ const newRooms = rooms.map(
 
 ## Configuration
 
-When using Axolemma programmatically (or eventually through the CLI), you can customize the default options using either a `.axolemmaconfig` file or by adding an "axolemma" field in your package.json.
+When using Axolemma programmatically, you can customize the default options using either a `.axolemmaconfig` file or by adding an "axolemma" field in your package.json.
 
 Your `.axolemmaconfig` can be either a JavaScript module or a JSON file. Axolemma will crawl up the directory tree to find the file so it can be in the root directory of your Ranvier bundle, the root of your fork of Ranvier, or even in your user home directory. It will use the 'nearest' config it finds, so you can have multiple configurations at different nesting levels.
 
@@ -69,15 +69,20 @@ Axolemma accepts the following options:
   * @property {string} [genericRoomTitle] A title to be used for all of the rooms in your generated area. Defaults to 'An Empty Room'.
   * @property {string} [genericRoomDesc] A description to be used for all of the rooms in your generated area. Defaults to 'There is nothing particularly interesting about this place.'
   * @property {string} [type] The 'type' of map creator to use. This must be the name of a ROT-js Map constructor. Defaults to 'Uniform'.
-  * @property {number} [roomDugPercentage] Percentage in decimal of map coordinates to be turned into rooms. Defaults to 0.25 (25%).
   * @property {timeLimit} [number] Amount of ms to wait for the ROT-js map generator algorithms to complete before giving up. Defaults to 60,000 (one minute).
   */
 ```
+
+Also, check out the ROT-js documentation for the mapper 'type' that you are using, for additional options.
 
 ## Misc.
 
 Axolemma is currently in an early alpha stage. Use at your own risk.
 
-The areas it generates are incredibly generic in this iteration so much hand-editing is still required.
+The areas it generates are fairly generic in this iteration so much hand-editing is still required.
 
-If you're using this in your Ranvier server to dynamically generate content on the fly, consider using a Cluster or similar to avoid blocking the main process with Axolemma.
+If you're using this in your Ranvier server to dynamically generate large amounts content on the fly, consider using a Cluster or similar to avoid blocking the main process with Axolemma.
+
+In testing on a machine with 8GB RAM, Axolemma can generate a 20x20 area in a matter of milliseconds.
+
+See the `examples` directory for code snippets that can be used to make Axolemma play nice with Ranvier.
