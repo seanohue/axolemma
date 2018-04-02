@@ -25,7 +25,7 @@ Here is a recipe for using Axolemma programmatically:
 // Require-able like any other library.
 const Axolemma = require('axolemma')
 
-const {graphic, rooms, yaml} = Axolemma.generate({ // Programmatically pass in options
+const {manifest, graphic, rooms, yaml} = Axolemma.generate({ // Programmatically pass in options
   type: 'Digger' // Uses ROT-js well-documented map generation algorithms.
   writeToFile: true // Can write YAML definitions to file for static persistence
 })
@@ -35,6 +35,9 @@ console.log(graphic)
 
 // Returns YAML string.
 console.log(yaml)
+
+// Returns area manifest as JS object.
+console.log(manifest)
 
 // Returns Ranvier-compatible room definitions.
 const newRooms = rooms.map(

@@ -36,6 +36,11 @@ module.exports = {
       options
     )
 
+    const manifest = {
+      title: options.areaTitle || 'Generated Area',
+      info: typeof areaInfo === 'object' ? areaInfo : null
+    }
+
     const {
       writeToFile = false
     } = configuredOptions
@@ -43,7 +48,7 @@ module.exports = {
     const {graphic, rooms} = generator(configuredOptions)
     console.log(`Generated an area with ${rooms.length} rooms.\n${graphic}`)
     if (giveCallback) {
-      return {graphic, rooms, buildCallback}
+      return {graphic, rooms, buildCallback, manifest}
     }
 
     return buildCallback(configuredOptions.writeToFile)
@@ -53,7 +58,7 @@ module.exports = {
       if (shouldWrite) {
         write(yaml, configuredOptions)
       }
-      return { graphic, rooms, yaml }
+      return { graphic, rooms, yaml, manifest }
     }
   },
 

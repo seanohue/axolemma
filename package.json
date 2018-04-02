@@ -29,7 +29,7 @@
     "loglevel": "^1.6.1",
     "pretty-print": "^1.1.0",
     "requires-node-version": "^1.0.0",
-    "rot-js": "^0.6.5",
+    "rot-js": "^0.6.5"
   },
   "devDependencies": {
     "chai": "^4.1.2",
