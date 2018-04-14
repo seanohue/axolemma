@@ -37,14 +37,17 @@ module.exports = {
       options
     )
 
+    const {
+      writeToFile = false,
+      areaTitle = 'Generated Area',
+      areaInfo = {}
+    } = configuredOptions
+
     const manifest = {
-      title: options.areaTitle || 'Generated Area',
+      title: areaTitle || 'Generated Area',
       info: areaInfo && typeof areaInfo === 'object' ? areaInfo : {}
     }
 
-    const {
-      writeToFile = false
-    } = configuredOptions
 
     const {graphic, rooms} = generator(configuredOptions)
     console.log(`Generated an area with ${rooms.length} rooms.\n${graphic}`)

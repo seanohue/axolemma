@@ -47,7 +47,7 @@ module.exports = class Map2D {
     room.setId(this._id++)
   }
 
-  weightedCreation () {
+  weightedCreation (x, y, value) {
     if (value) return // Already done.
 
     const pick = ROT.RNG.getWeightedValue(this.getWeightedTable())
