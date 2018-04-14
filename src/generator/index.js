@@ -27,7 +27,8 @@ module.exports = function generator (options = {}) {
     roomWidthMinimum,
     corridorLengthMinimum,
     corridorLengthMaximum,
-    regularity
+    regularity,
+    weightedRoomsTable,
   } = options
 
   // Make just a 2D map as MVP.
@@ -49,7 +50,7 @@ module.exports = function generator (options = {}) {
       roomDugPercentage,
       timeLimit,
       genericRoomTitle,
-      genericRoomDesc
+      genericRoomDesc,
     })
 
     const mapper = new Mapper(width, height, _mapperOptions)
@@ -57,7 +58,8 @@ module.exports = function generator (options = {}) {
       title: genericRoomTitle,
       description: genericRoomDesc,
       width,
-      height
+      height,
+      weightedRoomsTable
     })
     try {
       map.create(mapper)

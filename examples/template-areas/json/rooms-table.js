@@ -1,4 +1,3 @@
-
 const COMMON = 5
 const UNCOMMON = 3
 const RARE = 1
@@ -21,4 +20,4 @@ module.exports = {
     title: 'Abandoned Ore Deposit',
     description: 'Loose stones cover the ground, surrounded an exposed vein of glittering metal.'
   }
-}
+};

@@ -21,7 +21,8 @@ const {getOptions} = require('./src/config')
   * @property {string} [genericRoomDesc] A description to be used for all of the rooms in your generated area. Defaults to 'There is nothing particularly interesting about this place.'
   * @property {string} [type] The 'type' of map creator to use. This must be the name of a ROT-js Map constructor. Defaults to 'Uniform'.
   * @property {number} [roomDugPercentage] Percentage in decimal of map coordinates to be turned into rooms. Defaults to 0.25 (25%).
-  * @property {timeLimit} [number] Amount of ms to wait for the ROT-js map generator algorithms to complete before giving up. Defaults to 60,000 (one minute).
+  * @property {number} [timeLimit] Amount of ms to wait for the ROT-js map generator algorithms to complete before giving up. Defaults to 60,000 (one minute).
+  * @property {Object} [weightedRoomsTable] A table of room ids to their title, description, and "weight" as used by the ROT-js RNG.
   */
 
 module.exports = {
@@ -38,7 +39,7 @@ module.exports = {
 
     const manifest = {
       title: options.areaTitle || 'Generated Area',
-      info: typeof areaInfo === 'object' ? areaInfo : null
+      info: areaInfo && typeof areaInfo === 'object' ? areaInfo : {}
     }
 
     const {
