@@ -78,6 +78,54 @@ Axolemma accepts the following options:
 
 Also, check out the ROT-js documentation for the mapper 'type' that you are using, for additional options.
 
+## Room Templates & Weighted Tables
+
+As of version 0.5.0, it is possible to use Axolemma to procedurally generate an area with multiple kinds of rooms. See `examples/template-areas/json` for the full example, but it works like this:
+
+```javascript
+// .axolemmaconfig.js
+module.exports = {
+  type: 'Digger',
+  areaTitle: 'Abandoned Mines',
+
+  // ... more options
+  // You could probably inline this but I like to keep 'em separated.
+  weightedRoomsTable: require('./rooms-table')
+}
+
+// rooms-table.js
+
+// These numbers are arbitrary.
+// Lower = more rare, higher = more common.
+// You could use any scale you want, these numbers could be
+// 10, 50, 100. Feel free to get more granular.
+const COMMON = 5
+const UNCOMMON = 3
+const RARE = 1
+
+module.exports = {
+  mineshaft: {
+    weight: UNCOMMON,
+    title: 'Abandoned Mineshaft',
+    description: 'A dark pit looms below you, boarded over by loose planks. The walls around you bear the marks of generations worth of pickaxes.'
+  },
+
+  minefloor: {
+    weight: COMMON,
+    // ...
+  },
+
+  oredeposit: {
+    weight: RARE,
+    // ...
+  }
+};
+```
+
+Based on this example, Axolemma will output an area with rooms featuring the properties specified in room-table.js. While it is pseudo-random, approximately 1 out of every 9 rooms will be an ore deposit, 3 out of 9 will be mineshafts, and 5 out of 9 will be a boring floor with rocks on it.
+
+Future goals for this include adding arbitrary properties to the room templates, so that one could specify which NPCs are in a room, which scripts, and more.
+
 ## Misc.
 
 Axolemma is currently in an early alpha stage. Use at your own risk.
@@ -88,4 +136,4 @@ If you're using this in your Ranvier server to dynamically generate large amount
 
 In testing on a machine with 8GB RAM, Axolemma can generate a 20x20 area in a matter of milliseconds.
 
-See the `examples` directory for code snippets that can be used to make Axolemma play nice with Ranvier.
+See the `examples` directory for code snippets that can be used to make Axolemma play nice with Ranvier, and additional how-tos.
