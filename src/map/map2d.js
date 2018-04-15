@@ -1,3 +1,5 @@
+const ROT = require('rot-js')
+
 const Room = require('./room')
 const {noop} = require('../util')
 
@@ -24,19 +26,61 @@ module.exports = class Map2D {
   }
 
   create (mapper) {
-    let id = 0
-    mapper.create((x, y, value) => {
-      if (value) return // Already done.
-      const title = this.config.title
-      const description = this.config.description
-      const room = new Room({
-        title,
-        description
-      })
-      this.map[x][y] = room
-      room.setCoordinates(x, y, this.zLevel)
-      room.setId(id++)
+    const creationCallback = this.config.weightedRoomsTable
+      ? this.weightedCreation.bind(this)
+      : this.defaultCreation.bind(this)
+    this._id = 0;
+    mapper.create(creationCallback)
+  }
+
+  defaultCreation (x, y, value) {
+    if (value) return // Already done.
+    const { title, description } = this.config
+
+    const room = new Room({
+      title,
+      description
     })
+
+    this.map[x][y] = room
+    room.setCoordinates(x, y, this.zLevel)
+    room.setId(this._id++)
+  }
+
+  weightedCreation (x, y, value) {
+    if (value) return // Already done.
+
+    const pick = ROT.RNG.getWeightedValue(this.getWeightedTable())
+    const {
+      title = this.config.title,
+      description = this.config.description
+    } = this.config.weightedRoomsTable[pick];
+
+    const room = new Room({
+      title,
+      description
+    })
+
+    this.map[x][y] = room
+    room.setCoordinates(x, y, this.zLevel)
+    room.setId(this._id++)
+  }
+
+  getWeightedTable () {
+    if (!this._weightedTable){
+      this._weightedTable = {}
+
+      for (const [id, def] of Object.entries(this.config.weightedRoomsTable)) {
+        if (!def.weight) {
+          console.log('Invalid or missing weight for ', id)
+          continue;
+        }
+
+        this._weightedTable[id] = def.weight
+      }
+    }
+
+    return this._weightedTable
   }
 
   iterate (roomCallback = noop, rowCallback = noop) {

@@ -19,7 +19,7 @@ function parse (options, rooms) {
 
   const yamlOptions = { flowLevel: 2 }
   const roomsYaml = yaml.safeDump(
-    rooms.map(room => room.serialize()),
+    rooms,
     yamlOptions
   )
   const areaYaml = yaml.safeDump({
