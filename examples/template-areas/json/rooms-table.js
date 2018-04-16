@@ -18,6 +18,7 @@ module.exports = {
   oredeposit: {
     weight: RARE,
     title: 'Abandoned Ore Deposit',
-    description: 'Loose stones cover the ground, surrounded an exposed vein of glittering metal.'
+    description: 'Loose stones cover the ground, surrounded an exposed vein of glittering metal.',
+    items: ['crafting:ore']
   }
 };

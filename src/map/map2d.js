@@ -51,14 +51,26 @@ module.exports = class Map2D {
     if (value) return // Already done.
 
     const pick = ROT.RNG.getWeightedValue(this.getWeightedTable())
+    const roomDef = this.config.weightedRoomsTable[pick]
     const {
       title = this.config.title,
       description = this.config.description
-    } = this.config.weightedRoomsTable[pick];
+    } = roomDef
+
+    // Handle arbitrary props on room definition.
+    const other = {}
+    for (const [prop, value] of Object.entries(roomDef)) {
+      if (['title', 'description'].includes(prop)) {
+        continue;
+      }
+
+      other[prop] = value;
+    }
 
     const room = new Room({
       title,
-      description
+      description,
+      other
     })
 
     this.map[x][y] = room
