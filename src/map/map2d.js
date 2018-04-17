@@ -60,7 +60,7 @@ module.exports = class Map2D {
     // Handle arbitrary props on room definition.
     const other = {}
     for (const [prop, value] of Object.entries(roomDef)) {
-      if (['title', 'description'].includes(prop)) {
+      if (['title', 'description', 'weight'].includes(prop)) {
         continue;
       }
 
