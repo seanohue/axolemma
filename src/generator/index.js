@@ -15,8 +15,8 @@ module.exports = function generator (options = {}) {
     height = 20,
     depth = 0,
     type = 'Uniform',
-    roomDugPercentage = 0.25,
-    dugPercentage = 0.25,
+    dugPercentage = 0.25,	// for Uniform maps only
+    roomDugPercentage = 0.25,	// for Digger maps only
     timeLimit = 60 * 1000,
     mapperOptions = {},
     genericRoomTitle = 'An Empty Room',
@@ -43,8 +43,8 @@ module.exports = function generator (options = {}) {
       roomHeightMinimum,
       roomWidthMaximum,
       roomWidthMinimum,
-      corridorLengthMinimum,
       corridorLengthMaximum,
+      corridorLengthMinimum,
       regularity,
       dugPercentage,
       roomDugPercentage,

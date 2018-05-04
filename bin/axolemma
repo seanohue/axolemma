@@ -79,7 +79,7 @@ const questions = [
     },
     filter: toInteger,
     validate: isPositiveNumber,
-    default: 10
+    default: 20
   },
   {
     type: 'input',
@@ -90,7 +90,7 @@ const questions = [
     },
     filter: toInteger,
     validate: isPositiveNumber,
-    default: 10
+    default: 20
   },
   {
     type: 'input',
@@ -148,12 +148,12 @@ const questions = [
     name: 'roomHeightMaximum',
     message(answers) {
       const {type} = answers
-      return blue(`[${type}] What will be the maximum height (y value) for each generated "room"?`)
+      return blue(`[${type}] What will be the maximum cell height (y value) for each generated "room"?`)
     },
     filter: toInteger,
     validate(input, answers) {
       const {height} = answers
-      return (isPositiveNumber(input) && input < height) || `Please enter a numeric value that is less than ${height}.`
+      return (isPositiveNumber(input) && input <= height) || `Please enter a numeric value that is less than or equal to ${height}.`
     }
   },
   {
@@ -162,39 +162,39 @@ const questions = [
     name: 'roomHeightMinimum',
     message(answers) {
       const {type} = answers
-      return blue(`[${type}] What will be the minimum height (y value) for each generated "room"?`)
+      return blue(`[${type}] What will be the minimum cell height (y value) for each generated "room"?`)
     },
     validate(input, answers) {
       const {roomHeightMaximum} = answers
-      return (isPositiveNumber(input) && input < roomHeightMaximum - 1) || `Please enter a numeric value that is less than ${roomHeightMaximum - 1}.`
+      return (isPositiveNumber(input) && input < roomHeightMaximum) || `Please enter a numeric value that is less than ${roomHeightMaximum}.`
     },
     filter: toInteger
   },
   {
     when: isMapType('Digger', 'Uniform'),
     type: 'input',
-    name: 'roomHeightMaximum',
+    name: 'roomWidthMaximum',
     message(answers) {
       const {type} = answers
-      return blue(`[${type}] What will be the maximum width (x value) for each generated "room"?`)
+      return blue(`[${type}] What will be the maximum cell width (x value) for each generated "room"?`)
     },
     filter: toInteger,
     validate(input, answers) {
-      const {height} = answers
-      return (isPositiveNumber(input) && input < height) || `Please enter a numeric value that is less than ${height}.`
+      const {width} = answers
+      return (isPositiveNumber(input) && input <= width) || `Please enter a numeric value that is less than or equal to ${width}.`
     }
   },
   {
     when: isMapType('Digger', 'Uniform'),
     type: 'input',
-    name: 'roomHeightMinimum',
+    name: 'roomWidthMinimum',
     message(answers) {
       const {type} = answers
-      return blue(`[${type}] What will be the minimum width (x value) for each generated "room"?`)
+      return blue(`[${type}] What will be the minimum cell width (x value) for each generated "room"?`)
     },
     validate(input, answers) {
-      const {roomHeightMaximum, height} = answers
-      return (isPositiveNumber(input) && input < roomHeightMaximum - 1) || `Please enter a numeric value that is less than ${roomHeightMaximum - 1}.`
+      const {roomWidthMaximum, width} = answers
+      return (isPositiveNumber(input) && input < roomWidthMaximum) || `Please enter a numeric value that is less than ${roomWidthMaximum}.`
     },
     filter: toInteger
   },
@@ -204,7 +204,7 @@ const questions = [
     name: 'dugPercentage',
     message(answers) {
       const {type} = answers
-      return blue(`[${type}] What percentage of the map area should be turned into rooms?`)
+      return blue(`[${type}] What percentage of the map area should be turned into room cells?`)
     },
     default: 0.25,
     validate: isPercentage,
@@ -229,12 +229,12 @@ const questions = [
     name: 'corridorLengthMaximum',
     message(answers) {
       const {type} = answers
-      return blue(`[${type}] What will be the maximum length for each generated "corridor"?`)
+      return blue(`[${type}] What will be the maximum cell length for each generated "corridor"?`)
     },
     validate(input, answers) {
       const {height, width} = answers
       const max = Math.min(height, width)
-      return (isPositiveNumber(input) && input < max) || `Please enter a positive numeric value that is less than ${max}.`
+      return (isPositiveNumber(input) && input <= max) || `Please enter a positive numeric value that is less than ${max}.`
     },
     filter: toInteger,
   },
@@ -244,12 +244,12 @@ const questions = [
     name: 'corridorLengthMinimum',
     message(answers) {
       const {type} = answers
-      return blue(`[${type}] What will be the minimum length for each generated "corridor"?`)
+      return blue(`[${type}] What will be the minimum cell length for each generated "corridor"?`)
     },
     validate(input, answers) {
       const {height, width, corridorLengthMaximum} = answers
       const max = Math.min(height, width, corridorLengthMaximum - 1)
-      return (isPositiveNumber(input) && input < max) || `Please enter a positive numeric value that is less than ${max}.`
+      return (isPositiveNumber(input) && input <= max) || `Please enter a positive numeric value that is less than ${max}.`
     },
     filter: toInteger
   },
@@ -299,8 +299,7 @@ const questions = [
       const {graphic, buildCallback, rooms} = ax.generate(axOptions, true)
       STATE.buildCallback = buildCallback
       STATE.rooms = rooms
-      console.log('LEGEND:\t. = room\t# = empty')
-      console.log(bold(graphic))
+      console.log('LEGEND:\t. = filled cell \t# = empty')
       return blue('Would you like to write this map to disk?')
     }
   }
