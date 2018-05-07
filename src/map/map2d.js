@@ -103,11 +103,24 @@ module.exports = class Map2D {
       rowCallback(row)
     }
     return this
+    
+  }
+
+  iterateBreadth (roomCallback = noop, rowCallback = noop) {
+    // draw() this starting with X rather than relying on row recursion,
+    // which flips the map 90 degrees.
+    for(var y = 0; y < this.height; y++) {
+      for(var x = 0; x < this.width; x++) {
+        roomCallback(this.getRoomByCoords(x,y))
+      }
+      rowCallback()
+    }
+    return this
   }
 
   draw () {
     let display = ''
-    this.iterate(
+    this.iterateBreadth(
       room => { display += (room ? '.' : '#') },
       () => { display += '\n' }
     )

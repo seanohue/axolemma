@@ -48,9 +48,8 @@ module.exports = {
       info: areaInfo && typeof areaInfo === 'object' ? areaInfo : {}
     }
 
-
     const {graphic, rooms} = generator(configuredOptions)
-    console.log(`Generated an area with ${rooms.length} rooms.\n${graphic}`)
+    console.log(`Generated an area with ${rooms.length} filled cells.\n${graphic}`)
     if (giveCallback) {
       return {graphic, rooms, buildCallback, manifest}
     }
