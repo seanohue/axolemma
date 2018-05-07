@@ -1,6 +1,6 @@
 {
   "name": "axolemma",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "A tool to procedurally generate areas compatible with the Ranvier MUD engine.",
   "main": "index.js",
   "bin": {
