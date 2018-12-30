@@ -62,7 +62,12 @@ module.exports = function generator (options = {}) {
       weightedRoomsTable
     })
     try {
-      map.create(mapper)
+      if (type == "Cellular") {
+        mapper.randomize(randomize);
+        for (var i=0; i<passes; i++) map.create(mapper);
+      } else {
+        map.create(mapper);
+      }
     } catch (error) {
       const msg = `Error when creating map. Please ensure options are correct for ROT-js map type ${type}.`
       console.log(msg)
