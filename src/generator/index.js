@@ -29,6 +29,11 @@ module.exports = function generator (options = {}) {
     corridorLengthMaximum,
     regularity,
     weightedRoomsTable,
+    randomize,
+    passes,
+    born = [5, 6, 7, 8],
+    survive = [4, 5, 6, 7, 8],
+    topology= 8
   } = options
 
   // Make just a 2D map as MVP.
@@ -51,6 +56,11 @@ module.exports = function generator (options = {}) {
       timeLimit,
       genericRoomTitle,
       genericRoomDesc,
+      randomize,
+      passes,
+      born = [5, 6, 7, 8],
+      survive = [4, 5, 6, 7, 8],
+      topology= 8
     })
 
     const mapper = new Mapper(width, height, _mapperOptions)
