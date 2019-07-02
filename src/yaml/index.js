@@ -37,7 +37,31 @@ function write (yaml, options) {
     filepath = process.cwd()
   } = options
   console.log('Writing to ' + filepath)
-  fs.writeFileSync(filepath + '/manifest.yml', areaYaml)
-  fs.writeFileSync(filepath + '/rooms.yml', roomsYaml)
-  console.log('Done!')
+
+  return new Promise((resolve, reject) => {
+    if (!fs.existsSync(filepath)) {
+      console.log('Making dir ', filepath);
+      return fs.mkdir(filepath, 0744, (err) => {
+        console.log('Made...', err || 'Success');
+        if (err) return reject(err)
+        writeFiles()
+      })
+    }
+
+    writeFiles()
+
+    function writeFiles() {
+      fs.writeFile(filepath + '/manifest.yml', areaYaml, (err) => {
+        console.log('Wrote area...', err || 'Success');
+
+        if (err) return reject(err)
+        fs.writeFile(filepath + '/rooms.yml', roomsYaml, (_err) => {
+          console.log('Wrote rooms...', _err || 'Success');
+          if (_err) return reject(_err)
+          console.log('Done!')
+          return resolve()
+        })
+      })
+    }
+  })
 }
