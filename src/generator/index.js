@@ -29,6 +29,11 @@ module.exports = function generator (options = {}) {
     corridorLengthMaximum,
     regularity,
     weightedRoomsTable,
+    randomize,
+    passes,
+    born = [5, 6, 7, 8],
+    survive = [4, 5, 6, 7, 8],
+    topology= 8
   } = options
 
   // Make just a 2D map as MVP.
@@ -51,6 +56,11 @@ module.exports = function generator (options = {}) {
       timeLimit,
       genericRoomTitle,
       genericRoomDesc,
+      randomize,
+      passes,
+      born = [5, 6, 7, 8],
+      survive = [4, 5, 6, 7, 8],
+      topology= 8
     })
 
     const mapper = new Mapper(width, height, _mapperOptions)
@@ -62,7 +72,12 @@ module.exports = function generator (options = {}) {
       weightedRoomsTable
     })
     try {
-      map.create(mapper)
+      if (type == "Cellular") {
+        mapper.randomize(randomize);
+        for (var i=0; i<passes; i++) map.create(mapper);
+      } else {
+        map.create(mapper);
+      }
     } catch (error) {
       const msg = `Error when creating map. Please ensure options are correct for ROT-js map type ${type}.`
       console.log(msg)
