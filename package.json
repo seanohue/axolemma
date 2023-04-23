@@ -28,7 +28,7 @@
     "inquirer": "^6.2.2",
     "js-yaml": "^3.10.0",
     "loglevel": "^1.6.1",
-    "pretty-print": "^1.1.0",
+    "pretty-print": "^2.0.0",
     "requires-node-version": "^1.0.0",
     "rot-js": "^0.6.5"
   },
